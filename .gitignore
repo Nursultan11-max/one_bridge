@@ -1,0 +1,100 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib60/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds BINARY_NAMES and DATA_NAMES
+#  In this case, BINARY_NAMES and DATA_NAMES are ignored because they are generated files.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/ # Если медиафайлы не должны быть в репозитории (обычно так)
+static_root/ # Если статика собирается и не должна быть в репозитории
+
+# Virtualenv
+venv/
+.venv/
+env/
+.env/
+ENV/
+# Исключаем только если venv вне проекта, но у нас она внутри, поэтому ее не нужно добавлять в .gitignore,
+# если вы хотите, чтобы Git знал о ней, но не о ее содержимом.
+# Однако, стандартная практика - полностью игнорировать папку venv.
+# Если папка venv находится внутри проекта, как у нас, то добавьте:
+/venv/
+
+# IDE / Editor files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sublime-workspace
+
+# Sensitive information (если будете использовать .env файлы для секретов)
+.env
+.env.*
+!.env.example
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
