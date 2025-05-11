@@ -9,21 +9,24 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+import os
+from dotenv import load_dotenv
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load environment variables from .env file
+load_dotenv(BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-=rhk169h$4!%9h1&#sgjx6k^l#@-244r8y7#ia@!$sar*+2cv2'
+SECRET_KEY = os.getenv('SECRET_KEY', 'your_default_fallback_secret_key_if_not_in_env')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False').lower() in ('true', '1', 't')
 
 ALLOWED_HOSTS = []
 
@@ -37,6 +40,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Сторонние приложения
+    'rest_framework',
+    'rest_framework.authtoken', # Для токен-аутентификации
+
+    # Наши приложения
+    'connector_api.apps.ConnectorApiConfig', # Или просто 'connector_api'
 ]
 
 MIDDLEWARE = [
@@ -74,10 +83,21 @@ WSGI_APPLICATION = 'core_integrator.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'mssql',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER', ''),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT', ''),
+        'OPTIONS': {
+            'driver': 'ODBC Driver 17 for SQL Server',
+        },
     }
 }
+
+if not DATABASES['default']['USER'] and not DATABASES['default']['PASSWORD']:
+    DATABASES['default']['OPTIONS']['Trusted_Connection'] = 'yes'
+
 
 
 # Password validation
