@@ -19,6 +19,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Load environment variables from .env file
 load_dotenv(BASE_DIR / '.env')
 
+# Mock 1C Settings (после load_dotenv)
+MOCK_1C_BASE_URL = os.getenv('MOCK_1C_BASE_URL')
+MOCK_1C_USER = os.getenv('MOCK_1C_USER')
+MOCK_1C_PASSWORD = os.getenv('MOCK_1C_PASSWORD')
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
