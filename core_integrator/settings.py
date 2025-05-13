@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from dotenv import load_dotenv
 from pathlib import Path
+import logging
+from logging.config import dictConfig
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -35,6 +37,77 @@ DEBUG = os.getenv('DEBUG', 'False').lower() in ('true', '1', 't')
 
 ALLOWED_HOSTS = []
 
+
+# --------- логирование ---------
+# Папка для логов
+LOG_DIR = BASE_DIR / 'logs'
+LOG_DIR.mkdir(exist_ok=True)
+
+# Конфигурация логирования
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'simple': {
+            'format': '[{levelname}] {message}',
+            'style': '{',
+        },
+        'verbose': {
+            'format': '{asctime} [{levelname}] {name}:{lineno} {message}',
+            'style': '{',
+            'datefmt': '%Y-%m-%d %H:%M:%S%z',
+        },
+        'json': {
+            '()': 'pythonjsonlogger.jsonlogger.JsonFormatter',
+            'fmt': '{"timestamp": "%(asctime)s", "level": "%(levelname)s", "logger": "%(name)s", "lineno": %(lineno)d, "message": %(message)s}',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+            'level': 'DEBUG',
+        },
+        'file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'formatter': 'verbose',
+            'filename': LOG_DIR / 'django_app.log',
+            'maxBytes': 10 * 1024 * 1024,  # 10 MB
+            'backupCount': 5,
+            'level': 'INFO',
+        },
+        'file_json': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'formatter': 'json',
+            'filename': LOG_DIR / 'django_app_json.log',
+            'maxBytes': 10 * 1024 * 1024,
+            'backupCount': 5,
+            'level': 'INFO',
+        },
+    },
+    'loggers': {
+        # корневой логгер
+        '': {
+            'handlers': ['console', 'file', 'file_json'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+        },
+        # django и сторонние
+        'django': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        # собственные модули
+        'connector_api': {
+            'handlers': ['console', 'file', 'file_json'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    }
+}
+# Применяем конфигурацию
+dictConfig(LOGGING)
+# --------------------------------
 
 # Application definition
 
@@ -102,7 +175,6 @@ DATABASES = {
 
 if not DATABASES['default']['USER'] and not DATABASES['default']['PASSWORD']:
     DATABASES['default']['OPTIONS']['Trusted_Connection'] = 'yes'
-
 
 
 # Password validation
