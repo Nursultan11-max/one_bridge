@@ -206,13 +206,15 @@ class IntegrationViewSet(viewsets.ViewSet):
             return Response({"status": "error", "message": "Некорректный JSON от 1С"}, status=status.HTTP_502_BAD_GATEWAY)
 
         try:
+            # Используем ИСХОДНЫЙ валидированный сериализатор 'serializer'
             context = self.get_serializer_context()
             context['order_1c_id'] = order_1c_id
-            save_serializer = OrderSerializer(data=request.data, context=context)
-            save_serializer.is_valid(raise_exception=True)
-            instance = save_serializer.save()
-            logger.info(f"Локальный заказ создан (ID: {instance.id}, 1C ID: {order_1c_id})")
-            return Response(save_serializer.data, status=status.HTTP_201_CREATED)
+            # Передаем обновленный контекст в существующий сериализатор перед сохранением
+            serializer.context.update(context) # Обновляем контекст у 'serializer'
+            instance = serializer.save() # Вызываем save() у 'serializer'
+            logger.info(f"Локальный заказ создан (ID: {instance.id}, 1C ID: {instance.order_1c_id})") # Используем instance.order_1c_id
+            # serializer.data теперь будет содержать данные сохраненного instance
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception as e:
             logger.critical(f"Критическая ошибка при сохранении локального заказа (1C ID: {order_1c_id}): {e}", exc_info=True)
             return Response({
